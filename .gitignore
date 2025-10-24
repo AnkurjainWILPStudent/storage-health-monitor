@@ -1,0 +1,7 @@
+# Storage Health Monitor (lab repo)  
+# logs, credentials, env files
+**/logs/*
+*.env
+*.pyc
+__pycache__/
+.vscode/
