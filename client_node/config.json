@@ -1,7 +1,7 @@
 {
   "monitoring_node_ip": "192.168.1.13",
   "monitoring_node_user": "admin",
-  "monitoring_node_receive_dir": "/var/monitor/client_data",
+  "monitoring_node_receive_dir": "/home/admin/monitor_data",
   "port": 22,
   "interval_minutes": 5,
   "log_path": "/home/user/project-root/client_node/logs/client_log.log",
