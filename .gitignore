@@ -5,3 +5,4 @@
 *.pyc
 __pycache__/
 .vscode/
+"client_node/config.json" 
