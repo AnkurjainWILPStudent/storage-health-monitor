@@ -100,8 +100,11 @@ def run():
         # remote path: <monitor_dir>/<hostname>/
         remote_subdir = f"{monitor_dir.rstrip('/')}/{hostname}"
         # Prepare remote directory (via ssh mkdir -p)
-        mkdir_cmd = ["ssh", "-o", "StrictHostKeyChecking=no", "-p", str(monitor_port),
-             f"{monitor_user}@{monitor_ip}", f"mkdir -p {remote_subdir} && chmod 750 {remote_subdir}"]
+        key_path = os.path.expanduser("~/.ssh/id_ed25519")
+        mkdir_cmd = ["ssh", "-i", key_path, "-o", "StrictHostKeyChecking=no",
+             "-p", str(monitor_port),
+             f"{monitor_user}@{monitor_ip}",
+             f"mkdir -p {remote_subdir} && chmod 750 {remote_subdir}"]
         logger.info("Ensuring remote directory exists: %s", remote_subdir)
         mk = subprocess.run(mkdir_cmd, capture_output=True, text=True)
         if mk.returncode != 0:
@@ -109,7 +112,8 @@ def run():
             payload["notes"].append("remote_mkdir_failed")
         else:
             # scp file
-            scp_cmd = ["scp", "-o", "StrictHostKeyChecking=no", "-P", str(monitor_port),
+            scp_cmd = ["scp", "-i", key_path, "-o", "StrictHostKeyChecking=no",
+           "-P", str(monitor_port),
            local_path, f"{monitor_user}@{monitor_ip}:{remote_subdir}/"]
             scp = subprocess.run(scp_cmd, capture_output=True, text=True)
             if scp.returncode != 0:
