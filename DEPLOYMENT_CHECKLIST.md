@@ -18,7 +18,7 @@ Use this checklist to deploy the Storage Health Monitor to your VMs with email a
 **Your Information:**
 ```
 Gmail Address: ___________________________________
-App Password:  ____ ____ ____ ____
+App Password:  
 Recipients:    ___________________________________
 ```
 
