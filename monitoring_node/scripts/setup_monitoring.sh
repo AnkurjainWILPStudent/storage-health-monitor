@@ -115,12 +115,12 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 SOURCE_MONITOR_DIR="$(dirname "$SCRIPT_DIR")"
 
 # Copy scripts
-if [ -f "$SOURCE_MONITOR_DIR/scripts/analyze_storage_health.py" ]; then
-    cp "$SOURCE_MONITOR_DIR/scripts/analyze_storage_health.py" "$MONITOR_DIR/scripts/"
+if [ -f "$SOURCE_MONITOR_DIR/project-root/monitoring_node/scripts/analyze_storage_health.py" ]; then
+    cp "$SOURCE_MONITOR_DIR/project-root/monitoring_node/scripts/analyze_storage_health.py" "$MONITOR_DIR/scripts/"
     chmod +x "$MONITOR_DIR/scripts/analyze_storage_health.py"
     echo -e "${GREEN}✓ Copied analyze_storage_health.py${NC}"
 else
-    echo -e "${RED}✗ Source script not found: $SOURCE_MONITOR_DIR/scripts/analyze_storage_health.py${NC}"
+    echo -e "${RED}✗ Source script not found: $SOURCE_MONITOR_DIR/project-root/monitoring_node/scripts/analyze_storage_health.py${NC}"
     exit 1
 fi
 
