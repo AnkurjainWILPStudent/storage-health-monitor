@@ -1,0 +1,64 @@
+{
+  "data_directory": "/home/admin/monitor_data",
+  "log_path": "/home/admin/monitoring_node/logs/analyzer.log",
+  "output_directory": "/home/admin/monitoring_node/reports",
+  "thresholds_file": "/home/admin/monitoring_node/config/thresholds.json",
+  "alert_config": {
+    "email": {
+      "enabled": true,
+      "smtp_server": "smtp.gmail.com",
+      "smtp_port": 587,
+      "use_tls": true,
+      "use_ssl": false,
+      "sender_email": "your-email@gmail.com",
+      "sender_password": "your-app-password-here",
+      "recipient_emails": [
+        "admin@example.com"
+      ],
+      "subject_prefix": "[Storage Alert]",
+      "send_on_warning": true,
+      "send_on_critical": true
+    },
+    "webhook": {
+      "enabled": false,
+      "url": "https://hooks.example.com/storage-alerts",
+      "timeout_seconds": 10,
+      "retry_count": 3
+    },
+    "console": {
+      "enabled": true
+    },
+    "log": {
+      "enabled": true
+    }
+  },
+  "analysis": {
+    "scan_interval_seconds": 60,
+    "file_pattern": "*/*.json",
+    "archive_processed": true,
+    "archive_directory": "/home/admin/monitoring_node/logs/archive",
+    "retention_days": 30
+  },
+  "performance": {
+    "max_concurrent_files": 10,
+    "file_size_limit_mb": 10,
+    "timeout_per_file_seconds": 30
+  },
+  "vm_info": {
+    "monitoring_node": {
+      "hostname": "monitoringnode",
+      "ssh_ip": "192.168.1.13",
+      "internal_ip": "192.168.56.10"
+    },
+    "clients": {
+      "clientnode": {
+        "ssh_ip": "192.168.1.14",
+        "internal_ip": "192.168.56.11"
+      },
+      "clientnode2": {
+        "ssh_ip": "192.168.1.15",
+        "internal_ip": "192.168.56.12"
+      }
+    }
+  }
+}

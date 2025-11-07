@@ -1,0 +1,2 @@
+# No external dependencies required for monitoring node
+# Uses only Python standard library modules

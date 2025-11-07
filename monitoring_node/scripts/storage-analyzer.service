@@ -1,0 +1,14 @@
+[Unit]
+Description=Storage Health Monitoring Analyzer
+After=network.target
+
+[Service]
+Type=oneshot
+User=admin
+WorkingDirectory=/home/admin/monitoring_node
+ExecStart=/usr/bin/python3 /home/admin/monitoring_node/scripts/analyze_storage_health.py
+StandardOutput=append:/home/admin/monitoring_node/logs/analyzer.log
+StandardError=append:/home/admin/monitoring_node/logs/analyzer.log
+
+[Install]
+WantedBy=multi-user.target

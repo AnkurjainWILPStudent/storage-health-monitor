@@ -1,11 +1,117 @@
-# Storage Health Monitor (lab repo)  
-# logs, credentials, env files
-**/logs/*
+# Storage Health Monitor - Git Ignore File
+
+# ==================================================
+# SENSITIVE DATA - NEVER COMMIT THESE
+# ==================================================
+
+# Environment variables (contains passwords/secrets)
+.env
 *.env
-*.pyc
+!.env.template
+
+# SSH keys
+*.pem
+*.key
+id_rsa*
+id_ed25519*
+*.ppk
+authorized_keys
+
+# ==================================================
+# PYTHON
+# ==================================================
+
 __pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+*.pyc
+
+# ==================================================
+# LOGS & DATA FILES
+# ==================================================
+
+# Log files
+*.log
+*.log.*
+**/logs/*.log
+**/logs/archive/*.json
+
+# Data files (client JSON reports)
+monitor_data/
+**/monitor_data/**/*.json
+
+# Reports (generated files)
+reports/
+Reports/
+**/reports/*.json
+
+# Archive files
+archive/
+**/archive/*.json
+
+# ==================================================
+# CONFIGURATION EXCEPTIONS
+# ==================================================
+
+# DO commit these config templates
+!**/config/*.json
+!**/thresholds.json
+!**/analyzer_config.json
+
+# But don't commit if they contain actual credentials
+# (use .env instead)
+
+# ==================================================
+# TEMPORARY & BACKUP FILES
+# ==================================================
+
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+*.bak
+*.backup
+backup-*
+
+# ==================================================
+# IDE & EDITOR
+# ==================================================
+
 .vscode/
-"client_node/config.json" 
-"client_node/config.json" 
-"client_node/config.json" 
-"client_node/config.json" 
+.idea/
+*.sublime-*
+.project
+.settings/
+
+# ==================================================
+# OS SPECIFIC
+# ==================================================
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+.Trash-*/
+.nfs*
+
+# ==================================================
+# TEST FILES
+# ==================================================
+
+test_data.json
+test_*.json
+**/test_output/
+ 

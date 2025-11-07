@@ -1,0 +1,12 @@
+[Unit]
+Description=Storage Health Analyzer Timer
+Requires=storage-analyzer.service
+
+[Timer]
+# Run 2 minutes after boot
+OnBootSec=2min
+# Then run every 10 minutes
+OnUnitActiveSec=10min
+
+[Install]
+WantedBy=timers.target

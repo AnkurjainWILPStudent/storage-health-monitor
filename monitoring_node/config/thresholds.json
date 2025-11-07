@@ -1,0 +1,53 @@
+{
+  "disk_usage": {
+    "warning_percent": 75,
+    "critical_percent": 90,
+    "description": "Disk space usage thresholds (percentage)"
+  },
+  "inode_usage": {
+    "warning_percent": 80,
+    "critical_percent": 95,
+    "description": "Inode usage thresholds (percentage)"
+  },
+  "disk_io": {
+    "read_latency_ms_warning": 100,
+    "read_latency_ms_critical": 200,
+    "write_latency_ms_warning": 150,
+    "write_latency_ms_critical": 300,
+    "description": "Disk I/O latency thresholds (milliseconds)"
+  },
+  "filesystem": {
+    "mount_point_required": true,
+    "description": "Filesystem validation requirements"
+  },
+  "data_freshness": {
+    "max_age_minutes": 15,
+    "description": "Maximum age of client data before marking as stale"
+  },
+  "system": {
+    "cpu_usage_warning": 80,
+    "cpu_usage_critical": 95,
+    "memory_usage_warning": 85,
+    "memory_usage_critical": 95,
+    "load_average_warning": 4.0,
+    "load_average_critical": 8.0,
+    "description": "System-wide resource thresholds"
+  },
+  "smart": {
+    "reallocated_sectors_warning": 5,
+    "reallocated_sectors_critical": 50,
+    "current_pending_sectors_warning": 1,
+    "current_pending_sectors_critical": 10,
+    "offline_uncorrectable_warning": 1,
+    "offline_uncorrectable_critical": 5,
+    "description": "SMART attribute thresholds for disk health"
+  },
+  "alerts": {
+    "enable_email": true,
+    "enable_webhook": false,
+    "enable_console": true,
+    "enable_log": true,
+    "alert_cooldown_minutes": 30,
+    "description": "Alert configuration and cooldown to prevent spam"
+  }
+}
