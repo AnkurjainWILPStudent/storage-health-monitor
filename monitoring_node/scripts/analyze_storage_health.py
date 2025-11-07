@@ -19,21 +19,56 @@ from datetime import datetime
 # Add parent directory to path for imports
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from monitoring_node.utils import (
-    setup_logger,
-    load_config,
-    load_thresholds,
-    write_json_atomic,
-    get_timestamp,
-    get_file_age_minutes,
-    archive_file,
-    cleanup_old_files,
-    ensure_directory,
-    format_bytes,
-    format_percentage
-)
-from monitoring_node.data_validator import DataValidator
-from monitoring_node.alert_handler import AlertHandler, AlertLevel
+# Import from utils (works both in dev and deployed structure)
+try:
+    from monitoring_node.utils import (
+        setup_logger,
+        load_config,
+        load_thresholds,
+        write_json_atomic,
+        get_timestamp,
+        get_file_age_minutes,
+        archive_file,
+        cleanup_old_files,
+    )
+except ModuleNotFoundError:
+    # Fallback for deployed structure where utils.py is in parent directory
+    from utils import (
+        setup_logger,
+        load_config,
+        load_thresholds,
+        write_json_atomic,
+        get_timestamp,
+        get_file_age_minutes,
+        archive_file,
+        cleanup_old_files,
+        ensure_directory,
+        format_bytes,
+        format_percentage
+    )
+except ModuleNotFoundError:
+    # Fallback for deployed structure where utils.py is in parent directory
+    from utils import (
+        setup_logger,
+        load_config,
+        load_thresholds,
+        write_json_atomic,
+        get_timestamp,
+        get_file_age_minutes,
+        archive_file,
+        cleanup_old_files,
+        ensure_directory,
+        format_bytes,
+        format_percentage
+    )
+
+try:
+    from monitoring_node.data_validator import DataValidator
+    from monitoring_node.alert_handler import AlertHandler, AlertLevel
+except ModuleNotFoundError:
+    # Fallback for deployed structure
+    from data_validator import DataValidator
+    from alert_handler import AlertHandler, AlertLevel
 
 
 class StorageHealthAnalyzer:
