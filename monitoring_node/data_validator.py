@@ -47,7 +47,53 @@ class DataValidator:
         self.errors = []
         self.warnings = []
     
-    def validate_report(self, data: Dict[str, Any]) -> Tuple[bool, List[str], List[str]]:
+    def _normalize_client_data(self, data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Normalize client data to expected format.
+        Handles different field naming conventions from various clients.
+        """
+        normalized = data.copy()
+        
+        # Map 'host' to 'hostname'
+        if 'host' in normalized and 'hostname' not in normalized:
+            normalized['hostname'] = normalized.pop('host')
+        
+        # Map 'collected_at' to 'timestamp'
+        if 'collected_at' in normalized and 'timestamp' not in normalized:
+            normalized['timestamp'] = normalized.pop('collected_at')
+        
+        # Map 'disk_partitions' to 'disks'
+        if 'disk_partitions' in normalized and 'disks' not in normalized:
+            disk_partitions = normalized.pop('disk_partitions')
+            
+            # Normalize each disk entry
+            normalized_disks = []
+            for disk in disk_partitions:
+                normalized_disk = {
+                    'device': disk.get('device', ''),
+                    'mount_point': disk.get('mountpoint', disk.get('mount_point', '')),
+                    'filesystem': disk.get('fstype', disk.get('filesystem', '')),
+                    'total_bytes': disk.get('total', disk.get('total_bytes', 0)),
+                    'used_bytes': disk.get('used', disk.get('used_bytes', 0)),
+                    'available_bytes': disk.get('free', disk.get('available_bytes', 0)),
+                    'usage_percent': disk.get('percent', disk.get('usage_percent', 0.0))
+                }
+                
+                # Copy optional fields if present
+                if 'opts' in disk:
+                    normalized_disk['opts'] = disk['opts']
+                if 'inodes_total' in disk:
+                    normalized_disk['inodes_total'] = disk['inodes_total']
+                if 'inodes_used' in disk:
+                    normalized_disk['inodes_used'] = disk['inodes_used']
+                
+                normalized_disks.append(normalized_disk)
+            
+            normalized['disks'] = normalized_disks
+        
+        return normalized
+    
+    def validate_report(self, data: Dict[str, Any]) -> Tuple[bool, Dict[str, Any], List[str], List[str]]:
         """
         Validate a complete client report.
         
@@ -55,33 +101,38 @@ class DataValidator:
             data: Client report data
             
         Returns:
-            Tuple of (is_valid, errors, warnings)
+            Tuple of (is_valid, normalized_data, errors, warnings)
         """
         self.errors = []
         self.warnings = []
         
         try:
+            # Normalize client data to expected format
+            normalized_data = self._normalize_client_data(data)
+            
             # Validate structure
-            self._validate_structure(data)
+            self._validate_structure(normalized_data)
             
             # Validate field types and values
-            self._validate_metadata(data)
-            self._validate_disks(data.get('disks', []))
+            self._validate_metadata(normalized_data)
+            self._validate_disks(normalized_data.get('disks', []))
             
             # Optional fields validation
-            if 'system' in data:
-                self._validate_system_info(data['system'])
+            if 'system' in normalized_data:
+                self._validate_system_info(normalized_data['system'])
             
-            if 'smart' in data:
-                self._validate_smart_data(data['smart'])
+            if 'smart' in normalized_data:
+                self._validate_smart_data(normalized_data['smart'])
             
         except ValidationError as e:
             self.errors.append(str(e))
+            normalized_data = data  # Return original data if normalization failed
         except Exception as e:
             self.errors.append(f"Unexpected validation error: {str(e)}")
+            normalized_data = data  # Return original data if validation failed
         
         is_valid = len(self.errors) == 0
-        return is_valid, self.errors, self.warnings
+        return is_valid, normalized_data, self.errors, self.warnings
     
     def _validate_structure(self, data: Dict[str, Any]) -> None:
         """Validate basic structure and required fields."""
@@ -294,5 +345,5 @@ class DataValidator:
             self.errors.append(f"Error reading file: {str(e)}")
             return False, {}, self.errors, self.warnings
         
-        is_valid, errors, warnings = self.validate_report(data)
-        return is_valid, data, errors, warnings
+        is_valid, normalized_data, errors, warnings = self.validate_report(data)
+        return is_valid, normalized_data, errors, warnings
