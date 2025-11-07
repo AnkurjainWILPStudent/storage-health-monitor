@@ -110,38 +110,50 @@ echo ""
 echo -e "${BLUE}Step 3: Copying monitoring scripts and configs...${NC}"
 echo ""
 
-# Get the source directory (where this script is running from)
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-SOURCE_MONITOR_DIR="$(dirname "$SCRIPT_DIR")"
+# Define source paths based on your VM structure
+# Your files are in: /home/admin/project-root/monitoring_node/
+SOURCE_PROJECT_ROOT="/home/admin/project-root"
+SOURCE_MONITOR_DIR="$SOURCE_PROJECT_ROOT/monitoring_node"
+SOURCE_SCRIPTS_DIR="$SOURCE_MONITOR_DIR/scripts"
+SOURCE_CONFIG_DIR="$SOURCE_MONITOR_DIR/config"
 
-# Copy scripts
-if [ -f "$SOURCE_MONITOR_DIR/project-root/monitoring_node/scripts/analyze_storage_health.py" ]; then
-    cp "$SOURCE_MONITOR_DIR/project-root/monitoring_node/scripts/analyze_storage_health.py" "$MONITOR_DIR/scripts/"
+echo "Source paths:"
+echo "  Project root: $SOURCE_PROJECT_ROOT"
+echo "  Monitoring node: $SOURCE_MONITOR_DIR"
+echo "  Scripts: $SOURCE_SCRIPTS_DIR"
+echo "  Config: $SOURCE_CONFIG_DIR"
+echo ""
+
+# Copy main analyzer script
+if [ -f "$SOURCE_SCRIPTS_DIR/analyze_storage_health.py" ]; then
+    cp "$SOURCE_SCRIPTS_DIR/analyze_storage_health.py" "$MONITOR_DIR/scripts/"
     chmod +x "$MONITOR_DIR/scripts/analyze_storage_health.py"
     echo -e "${GREEN}✓ Copied analyze_storage_health.py${NC}"
 else
-    echo -e "${RED}✗ Source script not found: $SOURCE_MONITOR_DIR/project-root/monitoring_node/scripts/analyze_storage_health.py${NC}"
+    echo -e "${RED}✗ Source script not found: $SOURCE_SCRIPTS_DIR/analyze_storage_health.py${NC}"
     exit 1
 fi
 
-# Copy supporting Python modules
+# Copy supporting Python modules from monitoring_node directory
 for module in utils.py data_validator.py alert_handler.py; do
     if [ -f "$SOURCE_MONITOR_DIR/$module" ]; then
         cp "$SOURCE_MONITOR_DIR/$module" "$MONITOR_DIR/"
         echo -e "${GREEN}✓ Copied $module${NC}"
     else
         echo -e "${RED}✗ Module not found: $SOURCE_MONITOR_DIR/$module${NC}"
+        echo "  Expected path: $SOURCE_MONITOR_DIR/$module"
         exit 1
     fi
 done
 
-# Copy configs
+# Copy configs from monitoring_node/config
 for config in analyzer_config.json thresholds.json; do
-    if [ -f "$SOURCE_MONITOR_DIR/config/$config" ]; then
-        cp "$SOURCE_MONITOR_DIR/config/$config" "$MONITOR_DIR/config/"
+    if [ -f "$SOURCE_CONFIG_DIR/$config" ]; then
+        cp "$SOURCE_CONFIG_DIR/$config" "$MONITOR_DIR/config/"
         echo -e "${GREEN}✓ Copied config/$config${NC}"
     else
-        echo -e "${RED}✗ Config not found: $SOURCE_MONITOR_DIR/config/$config${NC}"
+        echo -e "${RED}✗ Config not found: $SOURCE_CONFIG_DIR/$config${NC}"
+        echo "  Expected path: $SOURCE_CONFIG_DIR/$config"
         exit 1
     fi
 done
