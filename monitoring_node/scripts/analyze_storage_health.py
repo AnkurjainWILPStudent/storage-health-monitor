@@ -30,18 +30,6 @@ try:
         get_file_age_minutes,
         archive_file,
         cleanup_old_files,
-    )
-except ModuleNotFoundError:
-    # Fallback for deployed structure where utils.py is in parent directory
-    from utils import (
-        setup_logger,
-        load_config,
-        load_thresholds,
-        write_json_atomic,
-        get_timestamp,
-        get_file_age_minutes,
-        archive_file,
-        cleanup_old_files,
         ensure_directory,
         format_bytes,
         format_percentage
