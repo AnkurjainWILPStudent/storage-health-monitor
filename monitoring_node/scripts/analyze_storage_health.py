@@ -557,17 +557,21 @@ def signal_handler(signum, frame):
 
 def main():
     """Main entry point."""
+    # Determine default config paths based on script location
+    script_dir = Path(__file__).parent
+    default_config_dir = script_dir.parent / 'config'
+    
     parser = argparse.ArgumentParser(
         description='Storage Health Analyzer - Monitor and analyze client storage reports'
     )
     parser.add_argument(
         '--config',
-        default='monitoring_node/config/analyzer_config.json',
+        default=str(default_config_dir / 'analyzer_config.json'),
         help='Path to analyzer configuration file'
     )
     parser.add_argument(
         '--thresholds',
-        default='monitoring_node/config/thresholds.json',
+        default=str(default_config_dir / 'thresholds.json'),
         help='Path to thresholds configuration file'
     )
     parser.add_argument(
