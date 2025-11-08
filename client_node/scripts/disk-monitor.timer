@@ -1,0 +1,13 @@
+[Unit]
+Description=Storage Health Monitor - Client Disk Monitor Timer
+Documentation=https://github.com/AnkurjainWILPStudent/storage-health-monitor
+Requires=disk-monitor.service
+
+[Timer]
+# Run every 9 minutes
+OnBootSec=1min
+OnUnitActiveSec=9min
+AccuracySec=1s
+
+[Install]
+WantedBy=timers.target

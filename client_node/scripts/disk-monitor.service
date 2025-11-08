@@ -1,0 +1,20 @@
+[Unit]
+Description=Storage Health Monitor - Client Disk Monitor
+Documentation=https://github.com/AnkurjainWILPStudent/storage-health-monitor
+After=network.target
+
+[Service]
+Type=oneshot
+User=user1
+Group=user1
+WorkingDirectory=/home/user1/project-root/client_node
+ExecStart=/usr/bin/python3 /home/user1/project-root/client_node/disk_monitor.py
+StandardOutput=append:/home/user1/project-root/client_node/logs/client_log.log
+StandardError=append:/home/user1/project-root/client_node/logs/client_log.log
+
+# Security settings
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
