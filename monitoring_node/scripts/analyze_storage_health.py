@@ -408,14 +408,34 @@ class StorageHealthAnalyzer:
         
         return issues
     
-    def _check_smart_thresholds(self, smart_data: Dict[str, Any], hostname: str) -> List[Dict[str, Any]]:
+    def _check_smart_thresholds(self, smart_data: Any, hostname: str) -> List[Dict[str, Any]]:
         """Check SMART metrics against thresholds."""
         issues = []
         smart_thresholds = self.thresholds.get('smart', {})
         
-        for device, attrs in smart_data.items():
-            if not isinstance(attrs, dict):
+        # Handle both dict and list formats
+        if isinstance(smart_data, list):
+            # Client sends list of smart entries: [{"device": "/dev/sda", ...}]
+            smart_entries = smart_data
+        elif isinstance(smart_data, dict):
+            # Dict format: {"/dev/sda": {...}}
+            smart_entries = [{"device": device, **attrs} for device, attrs in smart_data.items()]
+        else:
+            return issues
+        
+        for entry in smart_entries:
+            if not isinstance(entry, dict):
                 continue
+            
+            device = entry.get('device', 'unknown')
+            
+            # Skip if SMART check failed or not available
+            if entry.get('status') in ['ERROR', 'SKIPPED']:
+                self.logger.debug(f"Skipping SMART analysis for {device}: {entry.get('status')}")
+                continue
+            
+            # Get attributes (may be in 'attributes' key or directly in entry)
+            attrs = entry.get('attributes', entry)
             
             # Check reallocated sectors
             reallocated = attrs.get('reallocated_sectors', 0)
