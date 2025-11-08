@@ -42,9 +42,12 @@ def setup_logger(
     logger = logging.getLogger(logger_name)
     logger.setLevel(level)
     
-    # Avoid duplicate handlers
+    # Avoid duplicate handlers - clear any existing handlers first
     if logger.handlers:
-        return logger
+        logger.handlers.clear()
+    
+    # Prevent propagation to root logger to avoid duplicate console output
+    logger.propagate = False
     
     # File handler with rotation
     from logging.handlers import RotatingFileHandler

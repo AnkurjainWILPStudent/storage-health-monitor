@@ -124,7 +124,7 @@ class StorageHealthAnalyzer:
             self.logger.info(f"Found {len(json_files)} JSON files to process")
             
             if not json_files:
-                self.logger.warning(f"No files matching pattern '{file_pattern}' in {data_dir}")
+                self.logger.warning(f"No files to process in {data_dir}")
                 return
             
             analysis_results = []
@@ -195,7 +195,7 @@ class StorageHealthAnalyzer:
         # Analyze data against thresholds
         result = self._analyze_data(data, file_path)
         
-        # Archive file if configured
+        # Archive processed file
         if self.config.get('analysis', {}).get('archive_processed', True):
             archive_dir = self.config.get('analysis', {}).get('archive_directory')
             if archive_dir:
