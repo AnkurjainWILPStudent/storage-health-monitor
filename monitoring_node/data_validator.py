@@ -105,6 +105,7 @@ class DataValidator:
         """
         self.errors = []
         self.warnings = []
+        normalized_data = data  # Initialize with original data
         
         try:
             # Normalize client data to expected format
@@ -126,10 +127,8 @@ class DataValidator:
             
         except ValidationError as e:
             self.errors.append(str(e))
-            normalized_data = data  # Return original data if normalization failed
         except Exception as e:
             self.errors.append(f"Unexpected validation error: {str(e)}")
-            normalized_data = data  # Return original data if validation failed
         
         is_valid = len(self.errors) == 0
         return is_valid, normalized_data, self.errors, self.warnings
