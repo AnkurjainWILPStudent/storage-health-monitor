@@ -4,6 +4,7 @@
   "output_directory": "/home/admin/monitoring_node/reports",
   "thresholds_file": "/home/admin/monitoring_node/config/thresholds.json",
   "alert_config": {
+    "cooldown_minutes": 15,
     "email": {
       "enabled": true,
       "smtp_server": "smtp.gmail.com",

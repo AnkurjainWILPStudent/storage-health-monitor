@@ -37,7 +37,8 @@ class AlertHandler:
         self.config = config
         self.logger = logger or logging.getLogger(__name__)
         self.alert_history = {}
-        self.cooldown_minutes = config.get('alerts', {}).get('alert_cooldown_minutes', 30)
+        # Fixed: Use alert_config path instead of alerts
+        self.cooldown_minutes = config.get('alert_config', {}).get('cooldown_minutes', 30)
         
         # Load alert history if exists
         self._load_alert_history()
@@ -249,11 +250,7 @@ class AlertHandler:
     <p>{alert_data['message']}</p>
 """
         
-        if alert_data.get('details'):
-            body_html += '<div class="details"><strong>Details:</strong><br/>'
-            for key, value in alert_data['details'].items():
-                body_html += f'<div class="detail-item"><strong>{key}:</strong> {value}</div>'
-            body_html += '</div>'
+        # Details section removed - info already in message
         
         body_html += """
 </div>

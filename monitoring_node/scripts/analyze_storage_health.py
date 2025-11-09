@@ -232,7 +232,19 @@ class StorageHealthAnalyzer:
         }
         
         # Analyze disk usage
+        # Deduplicate disks by device to avoid multiple alerts for same physical disk
+        seen_devices = {}
         for disk in data.get('disks', []):
+            device = disk.get('device', 'unknown')
+            # Keep only the root mount (/) or first occurrence of each device
+            if device not in seen_devices:
+                seen_devices[device] = disk
+            elif disk.get('mount_point') == '/':
+                # Prefer root mount point if available
+                seen_devices[device] = disk
+        
+        # Check thresholds for unique devices only
+        for disk in seen_devices.values():
             disk_issues = self._check_disk_thresholds(disk, hostname)
             result['issues'].extend(disk_issues)
         
