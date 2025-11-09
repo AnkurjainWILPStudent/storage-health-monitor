@@ -83,25 +83,29 @@ class AlertHandler:
         }
         
         # Send through enabled channels
-        alerts_config = self.config.get('alerts', {})
+        alert_config = self.config.get('alert_config', {})
         success = False
         
-        if alerts_config.get('enable_console', True):
+        # Console alerts
+        if alert_config.get('console', {}).get('enabled', True):
             self._send_console_alert(alert_data)
             success = True
         
-        if alerts_config.get('enable_log', True):
+        # Log alerts
+        if alert_config.get('log', {}).get('enabled', True):
             self._send_log_alert(alert_data)
             success = True
         
-        if alerts_config.get('enable_email', False):
+        # Email alerts
+        if alert_config.get('email', {}).get('enabled', False):
             try:
                 self._send_email_alert(alert_data)
                 success = True
             except Exception as e:
                 self.logger.error(f"Failed to send email alert: {e}")
         
-        if alerts_config.get('enable_webhook', False):
+        # Webhook alerts
+        if alert_config.get('webhook', {}).get('enabled', False):
             try:
                 self._send_webhook_alert(alert_data)
                 success = True
