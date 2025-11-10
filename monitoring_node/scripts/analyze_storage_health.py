@@ -522,35 +522,72 @@ class StorageHealthAnalyzer:
             self.logger.error(f"Failed to send alert: {e}")
     
     def _generate_summary_report(self, results: List[Dict[str, Any]]) -> None:
-        """Generate and save summary report."""
+        """Generate and save summary report in CSV format only."""
         output_dir = self.config.get('output_directory')
         if not output_dir:
             return
         
         timestamp = datetime.utcnow().strftime('%Y%m%d_%H%M%S')
-        report_path = os.path.join(output_dir, f'analysis_report_{timestamp}.json')
-        
-        report = {
-            'generated_at': get_timestamp(),
-            'statistics': self.stats,
-            'results': results,
-            'summary': {
-                'total_hosts': len(results),
-                'hosts_with_issues': sum(1 for r in results if r.get('issues')),
-                'total_issues': sum(len(r.get('issues', [])) for r in results),
-                'critical_issues': sum(
-                    1 for r in results
-                    for issue in r.get('issues', [])
-                    if issue.get('level') == AlertLevel.CRITICAL
-                )
-            }
-        }
+        report_path_csv = os.path.join(output_dir, f'analysis_report_{timestamp}.csv')
         
         try:
-            write_json_atomic(report_path, report)
-            self.logger.info(f"Summary report saved to {report_path}")
+            # Save CSV report only
+            self._write_csv_report(report_path_csv, results)
+            self.logger.info(f"CSV report saved to {report_path_csv}")
         except Exception as e:
-            self.logger.error(f"Failed to save summary report: {e}")
+            self.logger.error(f"Failed to save CSV report: {e}")
+    
+    def _write_csv_report(self, csv_path: str, results: List[Dict[str, Any]]) -> None:
+        """Write results to CSV file."""
+        import csv
+        
+        with open(csv_path, 'w', newline='') as csvfile:
+            fieldnames = [
+                'timestamp', 'hostname', 'issue_level', 'issue_type', 
+                'device', 'mount_point', 'message', 'usage_percent', 
+                'threshold', 'total_gb', 'used_gb', 'available_gb'
+            ]
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+            writer.writeheader()
+            
+            for result in results:
+                hostname = result.get('hostname', 'unknown')
+                timestamp = result.get('timestamp', '')
+                
+                # If no issues, write one row showing OK status
+                if not result.get('issues'):
+                    writer.writerow({
+                        'timestamp': timestamp,
+                        'hostname': hostname,
+                        'issue_level': 'OK',
+                        'issue_type': 'none',
+                        'device': '',
+                        'mount_point': '',
+                        'message': 'No issues detected',
+                        'usage_percent': '',
+                        'threshold': '',
+                        'total_gb': '',
+                        'used_gb': '',
+                        'available_gb': ''
+                    })
+                else:
+                    # Write one row per issue
+                    for issue in result.get('issues', []):
+                        details = issue.get('details', {})
+                        writer.writerow({
+                            'timestamp': timestamp,
+                            'hostname': hostname,
+                            'issue_level': issue.get('level', ''),
+                            'issue_type': issue.get('type', ''),
+                            'device': issue.get('device', ''),
+                            'mount_point': issue.get('mount_point', ''),
+                            'message': issue.get('message', ''),
+                            'usage_percent': details.get('usage_percent', ''),
+                            'threshold': details.get('threshold', ''),
+                            'total_gb': details.get('total', ''),
+                            'used_gb': details.get('used', ''),
+                            'available_gb': details.get('available', '')
+                        })
     
     def _cleanup_old_data(self) -> None:
         """Clean up old archived files."""

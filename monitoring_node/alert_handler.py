@@ -213,77 +213,23 @@ class AlertHandler:
         msg['To'] = ', '.join(recipient_emails)
         msg['Subject'] = subject
         
-        # Build HTML email body
-        body_html = f"""
-<html>
-<head>
-<style>
-    body {{ font-family: Arial, sans-serif; }}
-    .alert-box {{ 
-        border: 2px solid {'#d32f2f' if level == AlertLevel.CRITICAL else '#ff9800'}; 
-        border-radius: 5px; 
-        padding: 15px; 
-        margin: 10px 0;
-        background-color: {'#ffebee' if level == AlertLevel.CRITICAL else '#fff3e0'};
-    }}
-    .level {{ 
-        font-weight: bold; 
-        color: {'#d32f2f' if level == AlertLevel.CRITICAL else '#ff9800'}; 
-        font-size: 18px;
-    }}
-    .details {{ 
-        background-color: #f5f5f5; 
-        padding: 10px; 
-        border-radius: 3px; 
-        margin-top: 10px;
-    }}
-    .detail-item {{ margin: 5px 0; }}
-</style>
-</head>
-<body>
-<div class="alert-box">
-    <div class="level">🚨 {alert_data['level']} ALERT</div>
-    <h2>{alert_data['title']}</h2>
-    <p><strong>Hostname:</strong> {alert_data['hostname']}</p>
-    <p><strong>Time:</strong> {alert_data['timestamp']}</p>
-    <p><strong>Message:</strong></p>
-    <p>{alert_data['message']}</p>
-"""
-        
-        # Details section removed - info already in message
-        
-        body_html += """
-</div>
-<hr/>
-<p style="font-size: 12px; color: #666;">
-This is an automated alert from Storage Health Monitor.<br/>
-Monitoring Node: monitoringnode (192.168.1.13)
-</p>
-</body>
-</html>
-"""
-        
-        # Plain text version
-        body_text = f"""
-Storage Health Alert
+        # Build plain text email body (no HTML, no styling)
+        body_text = f"""Storage Health Alert
 
 Level: {alert_data['level']}
 Hostname: {alert_data['hostname']}
 Time: {alert_data['timestamp']}
 
+Message:
 {alert_data['message']}
+
+---
+This is an automated alert from Storage Health Monitor.
+Monitoring Node: monitoringnode (192.168.1.13)
 """
         
-        if alert_data.get('details'):
-            body_text += "\n\nDetails:\n"
-            for key, value in alert_data['details'].items():
-                body_text += f"  {key}: {value}\n"
-        
-        body_text += "\n---\nThis is an automated alert from Storage Health Monitor.\nMonitoring Node: monitoringnode (192.168.1.13)\n"
-        
-        # Attach both plain text and HTML versions
+        # Attach plain text only
         msg.attach(MIMEText(body_text, 'plain'))
-        msg.attach(MIMEText(body_html, 'html'))
         
         # Send email via Gmail SMTP
         smtp_server = email_config.get('smtp_server', 'smtp.gmail.com')
