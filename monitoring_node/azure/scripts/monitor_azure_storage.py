@@ -122,6 +122,29 @@ class AzureStorageMonitor:
             self.logger.error(f"Failed to initialize Azure credentials: {e}")
             raise
     
+    def monitor_single_account(self, account_name: str):
+        """Monitor a single storage account"""
+        self.logger.info("=" * 80)
+        self.logger.info(f"Starting Azure Storage monitoring for: {account_name}")
+        self.logger.info("=" * 80)
+        
+        if account_name not in self.config['storage_accounts']:
+            self.logger.error(f"Account '{account_name}' not found in configuration")
+            return
+        
+        account_config = self.config['storage_accounts'][account_name]
+        
+        if not account_config['monitoring']['enabled']:
+            self.logger.info(f"Account '{account_name}' is disabled in configuration")
+            return
+        
+        results = self.monitor_storage_account(account_name, account_config)
+        self._generate_csv_report(account_name, results)
+        self._log_statistics()
+        
+        self.logger.info(f"Azure Storage monitoring completed for: {account_name}")
+        self.logger.info("=" * 80)
+    
     def monitor_all_accounts(self):
         """Monitor all configured storage accounts"""
         self.logger.info("=" * 80)
@@ -395,6 +418,11 @@ def main():
         action='store_true',
         help='Run in test mode (validate credentials only)'
     )
+    parser.add_argument(
+        '--account',
+        choices=['finance', 'marketing'],
+        help='Monitor specific account only (finance or marketing)'
+    )
     
     args = parser.parse_args()
     
@@ -408,7 +436,11 @@ def main():
             print("\nTest passed! Ready to monitor Azure storage.")
             return 0
         
-        monitor.monitor_all_accounts()
+        # Monitor specific account or all accounts
+        if args.account:
+            monitor.monitor_single_account(args.account)
+        else:
+            monitor.monitor_all_accounts()
         return 0
     
     except Exception as e:

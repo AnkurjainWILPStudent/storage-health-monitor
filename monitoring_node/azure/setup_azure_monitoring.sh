@@ -111,7 +111,7 @@ After=network.target
 Type=oneshot
 User=admin
 WorkingDirectory=/home/admin/monitoring_node/azure
-ExecStart=/usr/bin/python3 /home/admin/monitoring_node/azure/scripts/monitor_azure_storage.py --config /home/admin/monitoring_node/azure/azure_config.json
+ExecStart=/usr/bin/python3 /home/admin/monitoring_node/azure/scripts/monitor_azure_storage.py --config /home/admin/monitoring_node/azure/azure_config.json --account finance
 StandardOutput=journal
 StandardError=journal
 
@@ -144,7 +144,7 @@ After=network.target
 Type=oneshot
 User=admin
 WorkingDirectory=/home/admin/monitoring_node/azure
-ExecStart=/usr/bin/python3 /home/admin/monitoring_node/azure/scripts/monitor_azure_storage.py --config /home/admin/monitoring_node/azure/azure_config.json
+ExecStart=/usr/bin/python3 /home/admin/monitoring_node/azure/scripts/monitor_azure_storage.py --config /home/admin/monitoring_node/azure/azure_config.json --account marketing
 StandardOutput=journal
 StandardError=journal
 
