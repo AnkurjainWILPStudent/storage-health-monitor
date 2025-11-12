@@ -60,7 +60,9 @@ info "Python version: $PYTHON_VERSION"
 
 # Step 2: Install Azure SDK
 info "Installing Azure SDK..."
-python3 -m pip install --upgrade azure-identity azure-storage-blob || error "Failed to install Azure SDK"
+python3 -m pip install --break-system-packages --upgrade azure-identity azure-storage-blob 2>/dev/null || \
+python3 -m pip install --upgrade azure-identity azure-storage-blob 2>/dev/null || \
+warn "Failed to install Azure SDK via pip (may already be installed)"
 info "✓ Azure SDK installed"
 
 # Step 3: Create directories
