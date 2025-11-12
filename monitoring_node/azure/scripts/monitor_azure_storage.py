@@ -25,12 +25,16 @@ except ImportError:
     sys.exit(1)
 
 # Import shared utilities from parent monitoring system
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# Add /home/admin/monitoring_node to Python path
+monitoring_node_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+sys.path.insert(0, monitoring_node_path)
+
 try:
     from utils import setup_logger, format_bytes, get_timestamp
     from alert_handler import AlertHandler, AlertLevel
-except ImportError:
-    print("ERROR: Could not import monitoring_node utilities")
+except ImportError as e:
+    print(f"ERROR: Could not import monitoring_node utilities: {e}")
+    print(f"Tried to import from: {monitoring_node_path}")
     print("Ensure this script is in /home/admin/monitoring_node/azure/scripts/")
     sys.exit(1)
 
