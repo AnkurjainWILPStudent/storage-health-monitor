@@ -1,0 +1,72 @@
+{
+  "_comment": "Azure Storage Monitoring Configuration Template",
+  "_instructions": "Copy this to azure_config.json and replace placeholder values",
+  
+  "azure_credentials": {
+    "_comment": "Get from Azure Portal → Microsoft Entra ID and App registrations",
+    "tenant_id": "YOUR_TENANT_ID_FROM_AZURE_AD",
+    "client_id": "YOUR_CLIENT_ID_FROM_APP_REGISTRATION",
+    "client_secret": "YOUR_CLIENT_SECRET_FROM_APP_REGISTRATION",
+    "subscription_id": "YOUR_SUBSCRIPTION_ID_FROM_AZURE_PORTAL"
+  },
+  
+  "storage_accounts": {
+    "finance": {
+      "_comment": "Mission-critical storage - monitored every 5 minutes",
+      "account_name": "YOUR_FINANCE_STORAGE_ACCOUNT_NAME",
+      "connection_string": "PASTE_FINANCE_CONNECTION_STRING_HERE",
+      "monitoring": {
+        "enabled": true,
+        "schedule_minutes": 5,
+        "auto_discover_containers": true,
+        "container_names": ["invoices", "transactions", "financial-reports", "audit-logs"],
+        "thresholds": {
+          "_comment": "Alert thresholds for finance storage",
+          "usage_warning_percent": 60,
+          "usage_critical_percent": 70
+        }
+      }
+    },
+    "marketing": {
+      "_comment": "Standard storage - monitored every 10 minutes",
+      "account_name": "YOUR_MARKETING_STORAGE_ACCOUNT_NAME",
+      "connection_string": "PASTE_MARKETING_CONNECTION_STRING_HERE",
+      "monitoring": {
+        "enabled": true,
+        "schedule_minutes": 10,
+        "auto_discover_containers": true,
+        "container_names": ["campaigns", "analytics", "media-assets", "customer-data"],
+        "thresholds": {
+          "_comment": "Alert thresholds for marketing storage",
+          "usage_warning_percent": 80,
+          "usage_critical_percent": 90
+        }
+      }
+    }
+  },
+  
+  "monitoring_settings": {
+    "_comment": "General monitoring configuration",
+    "log_path": "/home/admin/monitoring_node/logs/azure_monitor.log",
+    "reports_directory": "/home/admin/azure_reports",
+    "enable_email_alerts": true,
+    "use_shared_config": true,
+    "_shared_config_note": "Email settings from /home/admin/monitoring_node/config/analyzer_config.json"
+  },
+  
+  "alert_config": {
+    "_comment": "Alert cooldown prevents duplicate alerts within time window",
+    "cooldown_minutes": 15,
+    "send_email_on_warning": true,
+    "send_email_on_critical": true
+  },
+  
+  "_documentation": {
+    "tenant_id": "Get from: Azure Portal → Microsoft Entra ID → Overview",
+    "client_id": "Get from: App registrations → sp-storage-monitor → Application ID",
+    "client_secret": "Get from: App registrations → sp-storage-monitor → Certificates & secrets",
+    "subscription_id": "Get from: Azure Portal → Subscriptions",
+    "connection_string": "Get from: Storage account → Access keys → Connection string",
+    "connection_string_format": "DefaultEndpointsProtocol=https;AccountName=...;AccountKey=...;EndpointSuffix=core.windows.net"
+  }
+}
