@@ -78,12 +78,11 @@ class AzureStorageMonitor:
             if os.path.exists(shared_config_path):
                 with open(shared_config_path, 'r') as f:
                     shared_config = json.load(f)
-                # Merge configs
-                merged_config = {
-                    'alert_config': shared_config.get('alert_config', {}),
-                    'azure_alert_config': self.config.get('alert_config', {})
-                }
-                self.alert_handler = AlertHandler(merged_config, self.logger)
+                # Use the shared alert_config directly (it has email settings)
+                self.alert_handler = AlertHandler(shared_config, self.logger)
+            else:
+                self.logger.warning("Shared config not found, email alerts disabled")
+                self.alert_handler = None
     
     def _load_config(self, config_path: str) -> Dict[str, Any]:
         """Load Azure configuration"""
