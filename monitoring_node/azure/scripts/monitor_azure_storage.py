@@ -302,7 +302,7 @@ class AzureStorageMonitor:
             issues.append({
                 'level': AlertLevel.CRITICAL,
                 'type': 'high_usage',
-                'message': f"Azure container '{account_name}/{container_name}' usage high: {metrics.usage_percent:.1f}%"
+                'message': f"Azure container '{account_name}/{container_name}' usage high: {metrics.usage_percent:.3f}%"
             })
         
         elif metrics.usage_percent >= thresholds['usage_warning_percent']:
@@ -310,7 +310,7 @@ class AzureStorageMonitor:
             issues.append({
                 'level': AlertLevel.WARNING,
                 'type': 'high_usage',
-                'message': f"Azure container '{account_name}/{container_name}' usage: {metrics.usage_percent:.1f}%"
+                'message': f"Azure container '{account_name}/{container_name}' usage: {metrics.usage_percent:.3f}%"
             })
         else:
             self.stats['containers_healthy'] += 1
@@ -323,7 +323,7 @@ class AzureStorageMonitor:
                     level=issue['level'],
                     title=f"container_usage - {container_name}",
                     message=issue['message'],
-                    hostname=f"{account_name} Storage",
+                    hostname=f"Azure {account_name.title()} Storage - {container_name}",
                     details={
                         'container': container_name,
                         'usage_percent': f"{metrics.usage_percent:.2f}",
